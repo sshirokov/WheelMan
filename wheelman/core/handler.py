@@ -2,15 +2,13 @@ import re
 from wheelman.libs.ircbot import SingleServerIRCBot
 from wheelman.libs.irclib import nm_to_n
 from wheelman.libs.utils import ObjDict
-import wheelman.settings as settings
+import wheelman.core.router as router
 
 class Handler(SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
-
-    def set_routes(self, routes):
-        self.routes = ObjDict(dict(routes))
+        self.routes = ObjDict(dict(router.DEFAULT_DISPATCH))
 
     def _route_message(self, connection, event, routes, early = False):
         meta = ObjDict({'origin': self, 'connection': connection, 'event': event})
