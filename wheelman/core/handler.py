@@ -1,7 +1,7 @@
 import re
-from ircbot import SingleServerIRCBot
-from irclib import nm_to_n
-from utils import ObjDict
+from wheelman.libs.ircbot import SingleServerIRCBot
+from wheelman.libs.irclib import nm_to_n
+from wheelman.libs.utils import ObjDict
 
 class Handler(SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
