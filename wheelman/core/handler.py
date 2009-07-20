@@ -55,3 +55,10 @@ class Handler(SingleServerIRCBot):
             self._reply(connection, e.target(), response)
         if response and type(response) in (list, tuple):
             map(lambda line: self._reply(connection, e.target(), line), response)
+
+    def _trace_event(self, connection, e):
+        print "EventTrace: [%s](%s => %s):" % (e.eventtype(), e.source(), e.target()), e.arguments()
+    on_nick = _trace_event
+    on_join = _trace_event
+    on_part = _trace_event
+    on_quit = _trace_event
