@@ -1014,7 +1014,7 @@ class DCCConnection(Connection):
             # Ouch!
             self.disconnect("Connection reset by peer.")
 
-class SimpleIRCClient:
+class SimpleIRCClient(object):
     """A simple single-server IRC client class.
 
     This is an example of an object-oriented wrapper of the IRC
