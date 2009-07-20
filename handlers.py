@@ -1,4 +1,5 @@
 from datetime import datetime
+from wheelman.libs.irclib import nm_to_n
 
 def targetted_public_message(meta, name, message):
     print "%s: Handling message: %s=>%s: %s" % (datetime.now(),
