@@ -25,3 +25,10 @@ def debug_db_flush(meta):
 def debug_db_commit(meta):
     session.commit()
     return "Flushed db"
+
+def die(meta, message):
+    import sys
+    message = message or "I've been asked to leave by %s" % nm_to_n(meta.event.source())
+    meta.connection.quit(message)
+    sys.exit(0) #TODO: This should be an exception handled at the top
+    

@@ -6,7 +6,9 @@ class InvalidRouteHandler(RouterError): pass
 
 DEFAULT_DISPATCH = (
     ('public', ()),
-    ('private', ()),
+    ('private', (
+            (r'^die\s*(?P<message>.*)$', die),
+    )),
     ('passive', (
             (r'^(?P<message>.+)$', log_message),
     )),
