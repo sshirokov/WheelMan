@@ -11,12 +11,23 @@ def targetted_public_message(meta, name, message):
     print "Name:", name
     print "Message:", message
 
-def nop(meta):
-    print "NOP"
+def nop(meta): pass
+
+def echo(meta, message):
+    return message
+
+def echo_verbose(meta, message):
+    return ("Message is %d chars" % len(message),
+            message)
+    
 
 import wheelman.core.router as router
 router.add_routes(('',
+        ('private', (
+                (r'^echo:\s+(?P<message>.+)\s*$', echo_verbose),
+        )),
         ('public', (
+                (r'^echo:\s+(?P<message>.+)\s*$', echo),
                 (r'^(?P<name>[^\s]+):\s+(?P<message>.+)\s*$', targetted_public_message),
         )),
         ('passive', (

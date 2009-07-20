@@ -10,7 +10,7 @@ class Handler(SingleServerIRCBot):
         self.channel = channel
         self.routes = ObjDict(dict(router.DISPATCH))
 
-    def _route_message(self, connection, event, routes, early = False):
+    def _route_message(self, connection, event, routes, early = True):
         meta = ObjDict({'origin': self, 'connection': connection, 'event': event})
         for route in routes:
             m = re.compile(route[0]).match(event.arguments()[-1])
@@ -36,10 +36,22 @@ class Handler(SingleServerIRCBot):
         else:
             super(Handler, self).on_ctcp(connection, e)
 
+    def _reply(self, connection, target, reply):
+        connection.privmsg(target, reply)
+
     def on_privmsg(self, connection, e):
         self._pass_message(connection, e)
-        self._route_message(connection, e, self.routes.private)
+        response = self._route_message(connection, e, self.routes.private)
+        if response and type(response) in (str, unicode):
+            self._reply(connection, nm_to_n(e.source()), response)
+        if response and type(response) in (list, tuple):
+            map(lambda line: self._reply(connection, nm_to_n(e.source()), line), response)
+
 
     def on_pubmsg(self, connection, e):
         self._pass_message(connection, e)
-        self._route_message(connection, e, self.routes.public)
+        response = self._route_message(connection, e, self.routes.public)
+        if response and type(response) in (str, unicode):
+            self._reply(connection, e.target(), response)
+        if response and type(response) in (list, tuple):
+            map(lambda line: self._reply(connection, e.target(), line), response)
