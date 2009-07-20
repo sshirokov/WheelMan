@@ -11,6 +11,19 @@ def targetted_public_message(meta, name, message):
     print "Name:", name
     print "Message:", message
 
+def nop(meta):
+    print "NOP"
+
+import wheelman.core.router as router
+router.add_routes(('',
+        ('public', (
+                (r'^(?P<name>[^\s]+):\s+(?P<message>.+)\s*$', targetted_public_message),
+        )),
+        ('passive', (
+                (r'^NOP$', nop),
+        )),
+)) 
+
 def main():
     bot = Handler("#botworld", "WheelMan", "localhost", 6669)
     bot.start()

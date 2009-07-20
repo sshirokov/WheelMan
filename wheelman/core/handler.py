@@ -8,7 +8,7 @@ class Handler(SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
-        self.routes = ObjDict(dict(router.DEFAULT_DISPATCH))
+        self.routes = ObjDict(dict(router.DISPATCH))
 
     def _route_message(self, connection, event, routes, early = False):
         meta = ObjDict({'origin': self, 'connection': connection, 'event': event})
