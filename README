@@ -1,0 +1,6 @@
+WheelMan is an IRC bot powered by RegEx routing to callbacks that simply return strings.
+
+The DB is backed by SqlAlchemy and the configuration is in pure python.
+
+The protocol is wrapped by irclib.py from http://python-irclib.sourceforge.net/
+With event handling provided by the same.
