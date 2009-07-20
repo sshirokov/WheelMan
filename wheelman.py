@@ -12,11 +12,6 @@ def targetted_public_message(meta, name, message):
     print "Name:", name
     print "Message:", message
 
-def debug_repl(meta):
-    import pdb; pdb.set_trace()
-
-    
-
 def main():
     bot = Handler("#botworld", "WheelMan", "localhost", 6669)
     bot.set_routes(router.DEFAULT_DISPATCH)
