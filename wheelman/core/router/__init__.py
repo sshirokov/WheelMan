@@ -1,4 +1,4 @@
-from wheelman.core.handlers.default import log_message, debug_repl
+from wheelman.core.handlers.default import *
 import wheelman.settings as settings
 
 class RouterError(Exception): pass
@@ -14,7 +14,13 @@ DEFAULT_DISPATCH = (
 
 DEFAULT_DEBUG_DISPATCH = (
     ('private', (
-           (r'^DEBUG::repl\(\)$', debug_repl),
+            (r'^DEBUG::repl\(\)$', debug_repl),
+            (r'^DEBUG::eval:\s+(?P<code>.+)\s*$', debug_eval),
+            (r'^DEBUG::db::flush\(\)\s*$', debug_db_flush),
+            (r'^DEBUG::db::flush\(\)\s*$', debug_db_commit),
+    )),
+    ('public', (
+            (r'DEBUG::eval:\s+(?P<code>.+)\s*$', debug_eval),
     )),
 )
 
