@@ -1,3 +1,5 @@
-print "Loading custom settings..."
+import os
+
 DEBUG = True
-print "Settings loaded"
+
+DATABASE="sqlite:///%s/db.db" % os.path.dirname(__file__)
