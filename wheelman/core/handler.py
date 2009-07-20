@@ -13,7 +13,7 @@ class Handler(SingleServerIRCBot):
     def _route_message(self, connection, event, routes, early = False):
         meta = ObjDict({'origin': self, 'connection': connection, 'event': event})
         for route in routes:
-            m = re.compile(route[0]).match(event.arguments()[0])
+            m = re.compile(route[0]).match(event.arguments()[-1])
             if m:
                 print "Dispatching to:", route[1]
                 response = route[1](meta, **m.groupdict())
@@ -25,6 +25,16 @@ class Handler(SingleServerIRCBot):
 
     def on_welcome(self, connection, e):
         connection.join(self.channel)
+
+    def get_version(self):
+        return "WheelMan -- a scriptable bot by Yaroslav Shirokov <slava@hackinggibsons.com>"
+
+    def on_ctcp(self, connection, e):
+        if e.arguments()[0] == 'ACTION':
+            self._pass_message(connection, e)
+            self._route_message(connection, e, self.routes.private)
+        else:
+            super(Handler, self).on_ctcp(connection, e)
 
     def on_privmsg(self, connection, e):
         self._pass_message(connection, e)

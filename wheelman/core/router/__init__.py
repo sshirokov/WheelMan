@@ -1,4 +1,4 @@
-from wheelman.core.handlers.default import log_message
+from wheelman.core.handlers.default import log_message, debug_repl
 import wheelman.settings as settings
 
 class RouterError(Exception): pass
@@ -11,7 +11,12 @@ DEFAULT_DISPATCH = (
             (r'^(?P<message>.+)$', log_message),
     )),
 )
-ROUTES = ()
+
+DEFAULT_DEBUG_DISPATCH = (
+    ('private', (
+           (r'^DEBUG::repl\(\)$', debug_repl),
+    )),
+)
 
 def add_route_to_section(section, route, cur_section):
     if cur_section[0] == section:
@@ -49,11 +54,12 @@ def add_routes(route_spec):
 DISPATCH = DEFAULT_DISPATCH
 if settings.DEBUG:
     print "Loading debug routes ...",
-    from wheelman.core.handlers.default import debug_repl
-    route = (r'^DEBUG::repl\(\)$', debug_repl)
-    DISPATCH = map(lambda cur_section: \
-                       add_route_to_section('private', route, cur_section),
-                   DEFAULT_DISPATCH)
+    for section, specs in dict(DEFAULT_DEBUG_DISPATCH).items():
+        for spec in specs:
+            print "Adding %s::spec(%s)" % (section, spec)
+            DISPATCH = map(lambda cur_section: \
+                               add_route_to_section(section, spec, cur_section),
+                           DISPATCH)
     print "[OK]"
 del(DEFAULT_DISPATCH)
     
