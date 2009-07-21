@@ -29,18 +29,19 @@ class FSM(object):
         return self.get_user_state(user)
 
     def input(self, event):
-        #What a fucking mess..
-        origin = event.source() or event.target() or ""
-        state, new_state = self.get_user_state(origin), None
-        if not state:
-            origin = event.target() or ""
-            state = self.get_user_state(origin)
-        if state: new_state = state.transition(event)
-        if new_state:
-            self.set_user_state(origin, new_state)
-            print "Transitioning[%s] %s => %s" % (origin,
-                                                  state,
-                                                  new_state)
-        return new_state
+        print "All FSM:", self.user_fsm
+        targets = filter(lambda t: type(t) in (str, unicode),
+                         (event.source(),
+                          event.target(),
+                          len(event.arguments()) and event.arguments()[0]))
+        next_state = None
+        for target in targets:
+            state = self.get_user_state(target)
+            next_state = getattr(state, 'transition', lambda e: None)(event)
+            if state and next_state:
+                self.set_user_state(target, next_state)
+                print "Transitioning[%s] %s => %s" % (target, state, next_state)
+                break            
+        return next_state
 
 fsm = FSM()
