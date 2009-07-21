@@ -1045,8 +1045,12 @@ class SimpleIRCClient(object):
     def _dispatcher(self, c, e):
         """[Internal]"""
         m = "on_" + e.eventtype()
+        print "Attempting dipatch(%s => %s: %s) on:" % (e.source(), e.target(), e.arguments()), m,
         if hasattr(self, m):
-            getattr(self, m)(c, e)
+            h = getattr(self, m)
+            print "[OK(%s)]" % h
+            h(c, e)
+        else: print "[FAILED]"
 
     def _dcc_disconnect(self, c, e):
         self.dcc_connections.remove(c)
