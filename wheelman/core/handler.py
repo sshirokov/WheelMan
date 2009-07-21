@@ -62,3 +62,4 @@ class Handler(SingleServerIRCBot):
     on_join = _trace_event
     on_part = _trace_event
     on_quit = _trace_event
+    on_notice = _trace_event
