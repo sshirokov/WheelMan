@@ -38,7 +38,12 @@ Registered(
 fsms = {}
 
 def need_user_state(state):
-    pass
+    def _d_closure(func):
+        def wrapped_func(meta, *args, **kwargs):
+            print "wrapped in need_user_state(%s)" % state
+            return func(meta, *args, **kwargs)
+        return wrapped_func
+    return _d_closure
 
 @need_user_state(Registered)
 def admin(meta):
