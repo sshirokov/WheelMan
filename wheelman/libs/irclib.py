@@ -1426,6 +1426,7 @@ numeric_events = {
     "303": "ison",
     "305": "unaway",
     "306": "nowaway",
+    "307": "registered",
     "311": "whoisuser",
     "312": "whoisserver",
     "313": "whoisoperator",
