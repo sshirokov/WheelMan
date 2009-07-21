@@ -3,7 +3,7 @@ from wheelman.libs.ircbot import SingleServerIRCBot
 from wheelman.libs.irclib import nm_to_n
 from wheelman.libs.utils import ObjDict
 import wheelman.core.router as router
-
+    
 class Handler(SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
