@@ -3,12 +3,19 @@ from wheelman.libs.ircbot import SingleServerIRCBot
 from wheelman.libs.irclib import nm_to_n
 from wheelman.libs.utils import ObjDict
 import wheelman.core.router as router
+from wheelman.core.fsm import fsm
     
 class Handler(SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
         self.routes = ObjDict(dict(router.DISPATCH))
+
+    def _dispatcher(self, connection, event):
+        if event.eventtype() != 'all_raw_messages':
+            fsm.input(event)
+            print "FSM fed:[%s] %s => %s" % (event.eventtype(), event.source(), event.target())
+        super(Handler, self)._dispatcher(connection, event)
 
     def _route_message(self, connection, event, routes, early = True):
         meta = ObjDict({'origin': self, 'connection': connection, 'event': event})

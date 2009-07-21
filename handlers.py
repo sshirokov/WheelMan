@@ -21,32 +21,7 @@ def echo_verbose(meta, message):
 #################################################
 ## FSM BULLSHIT
 #################################################
-from wheelman.libs.wtfsm import make_states, State, Transition
-Anonymous, WhoisWait, Registered = make_states("Anonymous",
-                                               "WhoisWait",
-                                               "Registered")
-Anonymous(
-    Transition(lambda e: e.eventtype() == "whoisuser", WhoisWait),
-    Transition(None, Anonymous))
-WhoisWait(
-    Transition(lambda e: e.eventtype() == "registered", Registered),
-    Transition(lambda e: e.eventtype() == "endofwhois", Anonymous),
-    Transition(None, WhoisWait))
-Registered(
-    Transition(None, Registered))
-
-class FSM(object):
-    def __init__(self):
-        self.user_fsm = {}
-
-    def get_user_state(self, user):
-        return self.user_fsm.get(nm_to_n(user), None)
-
-    def set_initial_user_state(self, user, data = None):
-        self.user_fsm[nm_to_n(user)] = Anonymous(data)
-        return self.get_user_state(user)
-
-fsm = FSM()
+from wheelman.core.fsm import fsm, Registered
 
 def need_user_state(state):
     def _d_closure(func):
