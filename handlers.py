@@ -37,7 +37,9 @@ def need_user_state(state):
                 print "Passing"
                 return func(meta, *args, **kwargs)
             else:
-                print "Failing"
+                print "Failing, and deferring"
+                fsm.fire_on((meta.event.source(), state),
+                            meta.connection, meta.event)
                 return None
             
         return wrapped_func
