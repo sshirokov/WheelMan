@@ -1,33 +1,23 @@
-from wheelman.libs.wtfsm import make_states, State, Transition
 from wheelman.libs.irclib import nm_to_n
-
-Anonymous, WhoisWait, Registered = make_states("Anonymous",
-                                               "WhoisWait",
-                                               "Registered")
-Anonymous(
-    Transition(lambda e: e.eventtype() == "whoisuser", WhoisWait),
-    Transition(None, Anonymous))
-WhoisWait(
-    Transition(lambda e: e.eventtype() == "registered", Registered),
-    Transition(lambda e: e.eventtype() == "endofwhois", Anonymous),
-    Transition(None, WhoisWait))
-Registered(
-    Transition(None, Registered))
+from wheelman.core.fsm.states import Anonymous
 
 class FSM(object):
     def __init__(self):
         self.user_fsm = {}
         self.pending_events = []
 
-    def get_user_state(self, user):
-        return self.user_fsm.get(nm_to_n(user), None)
+    def get_user_states(self, user):
+        return self.user_fsm.get(nm_to_n(user), [])
 
-    def set_user_state(self, user, state):
-        self.user_fsm[nm_to_n(user)] = state
+    def update_user_state(self, user, old, new):
+        self.user_fsm[nm_to_n(user)].remove(old)
+        self.user_fsm[nm_to_n(user)].append(new)
 
-    def set_initial_user_state(self, user, data = None):
-        self.user_fsm[nm_to_n(user)] = Anonymous(data)
-        return self.get_user_state(user)
+    def add_initial_user_state(self, user, data = None, state=Anonymous):
+        if not self.user_fsm.get(nm_to_n(user)):
+            self.user_fsm[nm_to_n(user)] = []
+        self.user_fsm[nm_to_n(user)].append(state(data))
+        return self.get_user_states(user)
 
     def fire_on(self, target_state, handler, event):
         print "Registering callback on: %s for (%s => %s: %s)" % (target_state,
@@ -41,7 +31,7 @@ class FSM(object):
         print "Firing all needed callbacks"
         to_fire = []
         for user_state, handler_event in self.pending_events[:]:
-            if user_state[1] == type(self.get_user_state(user_state[0])):
+            if user_state[1] in [type(s) for s in self.get_user_states(user_state[0])]:
                 print "%s eligible to fire: %s => %s: %s" % (user_state,
                                                              handler_event[1].source(),
                                                              handler_event[1].target(),
@@ -49,12 +39,6 @@ class FSM(object):
                 print "Removing from pend queue, adding to exec queue"
                 self.pending_events.remove((user_state, handler_event))
                 to_fire.append(handler_event)
-            else:
-                print user_state[1], "==", type(self.get_user_state(user_state[0]))
-                print "%s INELIGIBLE to fire: %s => %s: %s" % (user_state,
-                                                               handler_event[1].source(),
-                                                               handler_event[1].target(),
-                                                               handler_event[1].arguments())
         print "Pending triggers remaining:", self.pending_events
         print "Firing all exec queue events"
         map(lambda h_e: h_e[0]._dispatcher(h_e[0].connection, h_e[1]),
@@ -66,14 +50,13 @@ class FSM(object):
                          (event.source(),
                           event.target(),
                           len(event.arguments()) and event.arguments()[0]))
-        next_state = None
         for target in targets:
-            state = self.get_user_state(target)
-            next_state = getattr(state, 'transition', lambda e: None)(event)
-            if state and next_state:
-                self.set_user_state(target, next_state)
-                print "Transitioning[%s] %s => %s" % (target, state, next_state)
+            states = self.get_user_states(target)
+            next_states = [s.transition(event) for s in states]
+            for state, next_state in zip(states, next_states):
+                if state and next_state:
+                    self.update_user_state(target, state, next_state)
+                    print "Transitioning[%s] %s => %s" % (target, state, next_state)
         self.fire_and_clear_all()
-        return next_state
 
 fsm = FSM()
