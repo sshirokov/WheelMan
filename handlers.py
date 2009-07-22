@@ -39,7 +39,7 @@ def need_user_state(state):
             else:
                 print "Failing, and deferring"
                 fsm.fire_on((meta.event.source(), state),
-                            meta.connection, meta.event)
+                            meta.origin, meta.event)
                 return None
             
         return wrapped_func

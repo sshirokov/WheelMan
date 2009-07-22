@@ -14,7 +14,7 @@ class Handler(SingleServerIRCBot):
     def _dispatcher(self, connection, event):
         if event.eventtype() != 'all_raw_messages':
             fsm.input(event)
-            print "FSM fed:[%s] %s => %s" % (event.eventtype(), event.source(), event.target())
+            print "FSM fed: [%s] %s => %s" % (event.eventtype(), event.source(), event.target())
         super(Handler, self)._dispatcher(connection, event)
 
     def _route_message(self, connection, event, routes, early = True):
