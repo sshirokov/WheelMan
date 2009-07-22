@@ -40,6 +40,7 @@ def need_user_state(state):
                 print "Failing, and deferring"
                 fsm.fire_on((meta.event.source(), state),
                             meta.origin, meta.event)
+                meta.connection.whois([nm_to_n(meta.event.source())])
                 return None
             
         return wrapped_func
