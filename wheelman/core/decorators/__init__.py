@@ -1,4 +1,5 @@
 from wheelman.core.fsm import fsm, Anonymous
+from wheelman.libs.irclib import nm_to_n
 
 def need_user_state(state):
     def _d_closure(func):
