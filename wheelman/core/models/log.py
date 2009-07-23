@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, String, Text, DateTime
 
 Base = declarative_base()
 class Log(Base):
-    __tablename__ = "log"
+    __tablename__ = "wheelman_log"
 
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime)
