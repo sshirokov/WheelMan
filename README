@@ -9,3 +9,4 @@ With event handling provided by the same.
 * Things and tweaks
 ** TODO: Teach @need_user_state to abort if an FSM loops to the initial state
 *** At present, it keeps the pending event queued and if the FSM *ever* ticks into the right state the event is re-injected
+** TODO: Update references on renicks

@@ -1,5 +1,7 @@
 from wheelman.libs.wtfsm import make_states, State, Transition
 
+# Whois-based states
+####################
 Anonymous, WhoisWait, Registered = make_states("Anonymous",
                                                "WhoisWait",
                                                "Registered")
