@@ -1,9 +1,10 @@
 from wheelman.libs.irclib import nm_to_n
-from wheelman.core.db import session
+from wheelman.core.db import Session
 
 def log_message(meta, message):
     from wheelman.core.models import Log
     print "Logging: %s => %s: %s" % (meta.event.source(), meta.event.target(), message)
+    session = Session()
     session.add(Log(type = meta.event.eventtype(),
                     source = nm_to_n(meta.event.source()),
                     target = meta.event.target(),
