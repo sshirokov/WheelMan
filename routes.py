@@ -6,6 +6,7 @@ router.add_routes(('handlers',
                 (r'^admin$', 'admin'),
         )),
         ('public', (
+                (r'dance!', 'dance'),
                 (r'^echo:\s+(?P<message>.+)\s*$', 'echo'),
                 (r'^(?P<name>[^\s]+):\s+(?P<message>.+)\s*$', 'targetted_public_message'),
         )),

@@ -21,6 +21,14 @@ def echo_verbose(meta, message):
     return ("Message is %d chars" % len(message),
             message)
 
+def dance(meta):
+    return ("Just for you, %s" % nm_to_n(meta.event.source()),
+            "|_^_^_|",
+            "/_^_^_/",
+            "\\_^_^_\\",
+            "^_^_v")
+
+
 @need_user_state(Registered)
 def admin(meta):
     return "Admin action ran"
