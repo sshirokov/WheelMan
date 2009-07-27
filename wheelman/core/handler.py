@@ -64,14 +64,16 @@ class Handler(SingleServerIRCBot):
             map(lambda line: self._reply(connection, e.target(), line), response)
 
     def on_endofnames(self, connection, e):
+        from wheelman.core.fsm import fsm
         from wheelman.core.fsm.states import Present
         print "NamReply: [%s](%s => %s):" % (e.eventtype(), e.source(), e.target()), e.arguments()
         print "Getting names"
         print "I am in:", self.channel
         print "I know about:", self.channels
-        for user in self.channels[self.channel].users():
-            pass
-
+        for user in [n for n in self.channels[self.channel].users() if n != self._nickname]:
+            print "Adding state: %s => %s" % (user, Present)
+            fsm.add_initial_user_state(user, state=Present)
+            
     def _trace_event(self, connection, e):
         print "EventTrace: [%s](%s => %s):" % (e.eventtype(), e.source(), e.target()), e.arguments()
     on_nick = _trace_event

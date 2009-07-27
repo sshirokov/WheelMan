@@ -6,10 +6,7 @@ def need_user_state(state):
         def wrapped_func(meta, *args, **kwargs):
             print "wrapped in need_user_state(%s)" % state
             
-            user_states = (fsm.get_user_states(meta.event.source()) or
-                          [fsm.add_initial_user_state(meta.event.source(),
-                                                      state=Anonymous,
-                                                      data=meta.event)])
+            user_states = fsm.get_user_states(meta.event.source())
 
             print "User states:", user_states,
             
@@ -18,6 +15,9 @@ def need_user_state(state):
                 return func(meta, *args, **kwargs)
             else:
                 print "Failing, and deferring"
+                fsm.add_initial_user_state(meta.event.source(),
+                                                      state=Anonymous,
+                                                      data=meta.event)
                 fsm.fire_on((meta.event.source(), state),
                             meta.origin, meta.event)
                 meta.connection.whois([nm_to_n(meta.event.source())])
