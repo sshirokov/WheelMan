@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Text, DateTime
+from wheelman.core.db import Session
 
 Base = declarative_base()
 class User(Base):
@@ -15,3 +16,13 @@ class User(Base):
 
     def __repr__(self):
         return "<User: %s>" % self.nick
+
+    @classmethod
+    def see_user(self, nick):
+        session = Session()
+        user = session.query(self).filter_by(nick = nick).first() or self(nick)
+        user.last_seen = datetime.now()
+        session.merge(user)
+        session.commit()
+        return user
+        
