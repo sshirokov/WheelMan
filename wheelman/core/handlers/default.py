@@ -34,4 +34,26 @@ def die(meta, message):
     sys.exit(0) #TODO: This should be an exception handled at the top
     
 def user_returned(meta, user):
-    print "%s is back" % user
+    from wheelman.core.models import User, Log
+    session = Session()
+    reply = ["Welcome back",
+             "I missed you!"]
+    last_seen = session.query(User.last_seen).filter_by(nick = user).first()
+    if not last_seen:
+        print "WARNING: User has returned, but we've never seen him before."
+        return
+    else: last_seen = last_seen[0]
+    missed = session.query(Log)\
+        .filter_by(target = meta.origin.channel, type = "pubmsg")\
+        .filter("created_at > :ls").params(ls = last_seen).all()
+    missed = ["%s <%s> %s" % (row.created_at.strftime("%m/%d/%y %I:%M:%S%p"),
+                              row.source,
+                              row.text)
+              for row in missed]
+    if len(missed):
+        reply += ["You missed some things :("] + missed
+    else:
+        reply.append("You didn't miss anything!")
+
+    User.see_user(user)
+    meta.origin.reply(user, reply)

@@ -45,25 +45,28 @@ class Handler(SingleServerIRCBot):
         else:
             super(Handler, self).on_ctcp(connection, e)
 
-    def _reply(self, target, reply):
-        self.connection.privmsg(target, reply)
+    def reply(self, target, reply):
+        if reply in (str, unicode):
+            self.connection.privmsg(target, reply)
+        else:
+            map(lambda msg: self.connection.privmsg(target, msg), reply)
 
     def on_privmsg(self, connection, e):
         self._pass_message(connection, e)
         response = self._route_message(connection, e, self.routes.private)
         if response and type(response) in (str, unicode):
-            self._reply(nm_to_n(e.source()), response)
+            self.reply(nm_to_n(e.source()), response)
         if response and type(response) in (list, tuple):
-            map(lambda line: self._reply(nm_to_n(e.source()), line), response)
+            map(lambda line: self.reply(nm_to_n(e.source()), line), response)
 
 
     def on_pubmsg(self, connection, e):
         self._pass_message(connection, e)
         response = self._route_message(connection, e, self.routes.public)
         if response and type(response) in (str, unicode):
-            self._reply(e.target(), response)
+            self.reply(e.target(), response)
         if response and type(response) in (list, tuple):
-            map(lambda line: self._reply(e.target(), line), response)
+            map(lambda line: self.reply(e.target(), line), response)
 
     def on_endofnames(self, connection, e):
         from wheelman.core.fsm import fsm
