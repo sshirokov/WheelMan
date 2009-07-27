@@ -46,7 +46,7 @@ class Handler(SingleServerIRCBot):
             super(Handler, self).on_ctcp(connection, e)
 
     def reply(self, target, reply):
-        if reply in (str, unicode):
+        if type(reply) in (str, unicode):
             self.connection.privmsg(target, reply)
         else:
             map(lambda msg: self.connection.privmsg(target, msg), reply)
