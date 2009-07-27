@@ -33,3 +33,5 @@ def die(meta, message):
     meta.connection.quit(message)
     sys.exit(0) #TODO: This should be an exception handled at the top
     
+def user_returned(meta, user):
+    print "%s is back" % user

@@ -49,11 +49,14 @@ class FSM(object):
         self.transition_triggers.append((user, old, new, action))
 
     def fire_on_transition(self, user, old, new):
-        print "Searching to fire on:", user, old, new
+        user = nm_to_n(user)
+        print "Searching to fire on: (%s) %s => %s:" % (user, old, new)
+        print "Queue:", self.transition_triggers
         for trigger in self.transition_triggers:
             t_user, t_old, t_new, t_action = trigger
-            if (t_user == None) or (t_user == user) and (t_old == old and t_new == new):
+            if ((t_user == None) or (t_user == user)) and (t_old == type(old) and t_new == type(new)):
                 print "Should fire:", trigger
+                t_action(user = user)
                 
 
     def input(self, event):

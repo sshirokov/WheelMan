@@ -4,6 +4,8 @@ from wheelman.libs.irclib import nm_to_n
 from wheelman.libs.utils import ObjDict
 import wheelman.core.router as router
 from wheelman.core.fsm import fsm
+from wheelman.core.db import Session
+from wheelman.core.models import User
     
 class Handler(SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
@@ -43,36 +45,45 @@ class Handler(SingleServerIRCBot):
         else:
             super(Handler, self).on_ctcp(connection, e)
 
-    def _reply(self, connection, target, reply):
-        connection.privmsg(target, reply)
+    def _reply(self, target, reply):
+        self.connection.privmsg(target, reply)
 
     def on_privmsg(self, connection, e):
         self._pass_message(connection, e)
         response = self._route_message(connection, e, self.routes.private)
         if response and type(response) in (str, unicode):
-            self._reply(connection, nm_to_n(e.source()), response)
+            self._reply(nm_to_n(e.source()), response)
         if response and type(response) in (list, tuple):
-            map(lambda line: self._reply(connection, nm_to_n(e.source()), line), response)
+            map(lambda line: self._reply(nm_to_n(e.source()), line), response)
 
 
     def on_pubmsg(self, connection, e):
         self._pass_message(connection, e)
         response = self._route_message(connection, e, self.routes.public)
         if response and type(response) in (str, unicode):
-            self._reply(connection, e.target(), response)
+            self._reply(e.target(), response)
         if response and type(response) in (list, tuple):
-            map(lambda line: self._reply(connection, e.target(), line), response)
+            map(lambda line: self._reply(e.target(), line), response)
 
     def on_endofnames(self, connection, e):
         from wheelman.core.fsm import fsm
-        from wheelman.core.fsm.states import Present
+        from wheelman.core.fsm.states import Present, Absent
         print "NamReply: [%s](%s => %s):" % (e.eventtype(), e.source(), e.target()), e.arguments()
         print "Getting names"
         print "I am in:", self.channel
         print "I know about:", self.channels
+        seen = []
         for user in [n for n in self.channels[self.channel].users() if n != self._nickname]:
-            print "Adding state: %s => %s" % (user, Present)
+            print "Seeing user, adding state: %s => %s" % (user, Present)
+            User.see_user(user)
             fsm.add_initial_user_state(user, state=Present)
+            seen.append(user)
+        for user in Session().query(User).filter(~User.nick.in_(seen)).all():
+            fsm.add_initial_user_state(user.nick, state=Absent)
+            
+        from wheelman.core.handlers.default import user_returned
+        meta = ObjDict({'origin': self, 'connection': connection, 'event': None})
+        fsm.on_transition(Absent, Present, lambda user: user_returned(meta, user))
             
     def _trace_event(self, connection, e):
         print "EventTrace: [%s](%s => %s):" % (e.eventtype(), e.source(), e.target()), e.arguments()
