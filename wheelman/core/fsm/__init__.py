@@ -7,6 +7,18 @@ class FSM(object):
         self.pending_events = []
         self.transition_triggers = []
 
+    def update_nick(self, old, new):
+        if self.user_fsm.has_key(old): self.user_fsm[new] = self.user_fsm.pop(old)
+
+        def update_transition_trigger(trigger):
+            if trigger[0] == None: return trigger
+            return tuple([new] + trigger[1:])
+        print "Mapping transition triggers:", self.transition_triggers
+        self.transition_triggers = map(update_transition_trigger,
+                                       self.transition_triggers)
+        print "Done:", self.transition_triggers
+        
+
     def get_user_states(self, user):
         return self.user_fsm.get(nm_to_n(user), [])
 

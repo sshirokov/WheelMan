@@ -89,10 +89,14 @@ class Handler(SingleServerIRCBot):
         fsm.on_transition(Absent, Present, lambda user: user_returned(meta, user))
         fsm.on_transition(Present, Absent, User.see_user)
         fsm.on_transition(Present, Present, User.see_user)
+
+    def on_nick(self, connection, e):
+        old, new = nm_to_n(e.source()), e.target()
+        print "Updating FSM nick keys %s => %s" % (old, new)
+        fsm.update_nick(old, new)
             
     def _trace_event(self, connection, e):
         print "EventTrace: [%s](%s => %s):" % (e.eventtype(), e.source(), e.target()), e.arguments()
-    on_nick = _trace_event
     on_part = _trace_event
     on_quit = _trace_event
     on_notice = _trace_event
