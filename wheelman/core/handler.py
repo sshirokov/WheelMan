@@ -87,6 +87,8 @@ class Handler(SingleServerIRCBot):
         from wheelman.core.handlers.default import user_returned
         meta = ObjDict({'origin': self, 'connection': connection, 'event': None})
         fsm.on_transition(Absent, Present, lambda user: user_returned(meta, user))
+        fsm.on_transition(Present, Absent, User.see_user)
+        fsm.on_transition(Present, Present, User.see_user)
             
     def _trace_event(self, connection, e):
         print "EventTrace: [%s](%s => %s):" % (e.eventtype(), e.source(), e.target()), e.arguments()

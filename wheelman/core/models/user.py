@@ -18,9 +18,9 @@ class User(Base):
         return "<User: %s>" % self.nick
 
     @classmethod
-    def see_user(self, nick):
+    def see_user(self, user):
         session = Session()
-        user = session.query(self).filter_by(nick = nick).first() or self(nick)
+        user = session.query(self).filter_by(nick = user).first() or self(user)
         user.last_seen = datetime.now()
         session.merge(user)
         session.commit()
