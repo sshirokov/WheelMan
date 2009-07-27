@@ -8,7 +8,7 @@ class User(Base):
     __tablename__ = "wheelman_user"
 
     id = Column(Integer, primary_key=True)
-    nick = Column(String)
+    nick = Column(String(30))
     last_seen = Column(DateTime)
     
     def __init__(self, nick):
