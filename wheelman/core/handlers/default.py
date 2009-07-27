@@ -44,7 +44,8 @@ def user_returned(meta, user):
         return
     else: last_seen = last_seen[0]
     missed = session.query(Log)\
-        .filter_by(target = meta.origin.channel, type = "pubmsg")\
+        .filter_by(target = meta.origin.channel)\
+        .filter(Log.type.in_(["pubmsg", "ctcp"]))\
         .filter("created_at > :ls").params(ls = last_seen).all()
     missed = ["%s <%s> %s" % (row.created_at.strftime("%m/%d/%y %I:%M:%S%p"),
                               row.source,
