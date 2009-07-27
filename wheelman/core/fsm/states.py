@@ -14,3 +14,17 @@ WhoisWait(
     Transition(None, WhoisWait))
 Registered(
     Transition(None, Registered))
+
+
+# Presense-based states
+#######################
+Present, Absent = make_states("Present", "Absent")
+
+Present(
+    Transition(lambda e: e.eventtype() == 'part', Absent),
+    Transition(lambda e: e.eventtype() == 'quit', Absent),
+    Transition(None, Present))
+
+Absent(
+    Transition(lambda e: e.eventtype() == 'join', Present),
+    Transition(None, Absent))
