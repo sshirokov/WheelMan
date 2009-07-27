@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Text, DateTime
 
 Base = declarative_base()
-class Log(Base):
+class User(Base):
     __tablename__ = "wheelman_user"
 
     id = Column(Integer, primary_key=True)
