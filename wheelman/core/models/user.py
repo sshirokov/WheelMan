@@ -24,5 +24,6 @@ class User(Base):
         user.last_seen = datetime.now()
         session.merge(user)
         session.commit()
+        session.close()
         return user
         

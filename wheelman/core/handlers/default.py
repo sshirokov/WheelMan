@@ -10,6 +10,7 @@ def log_message(meta, message):
                     target = meta.event.target(),
                     text = message))
     session.commit()
+    session.close()
     
 
 def debug_repl(meta):
@@ -41,6 +42,7 @@ def user_returned(meta, user):
     last_seen = session.query(User.last_seen).filter_by(nick = user).first()
     if not last_seen:
         print "WARNING: User has returned, but we've never seen him before."
+        session.close()
         return
     else: last_seen = last_seen[0]
     missed = session.query(Log)\
@@ -55,6 +57,6 @@ def user_returned(meta, user):
         reply += ["You missed some things :("] + missed
     else:
         reply.append("You didn't miss anything!")
-
+    session.close()
     User.see_user(user)
     meta.origin.reply(user, reply)

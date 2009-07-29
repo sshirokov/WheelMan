@@ -81,8 +81,10 @@ class Handler(SingleServerIRCBot):
             User.see_user(user)
             fsm.add_initial_user_state(user, state=Present)
             seen.append(user)
-        for user in Session().query(User).filter(~User.nick.in_(seen)).all():
+        session = Session()
+        for user in session.query(User).filter(~User.nick.in_(seen)).all():
             fsm.add_initial_user_state(user.nick, state=Absent)
+        session.close()
             
         from wheelman.core.handlers.default import user_returned
         meta = ObjDict({'origin': self, 'connection': connection, 'event': None})
