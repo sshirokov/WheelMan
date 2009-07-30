@@ -8,7 +8,7 @@ router.add_routes(('handlers',
         ('public', (
                 (r'^dance!$', 'dance'),
                 (r'^echo:\s+(?P<message>.+)\s*$', 'echo'),
-                (r'^(?P<name>[^\s]+):\s+(?P<message>.+)\s*$', 'targetted_public_message'),
+                (r"WheelMan: Who's on first?", 'first_post'),
         )),
         ('passive', (
                 (r'^NOP$', 'nop'),
