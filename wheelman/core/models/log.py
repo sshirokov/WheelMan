@@ -8,9 +8,9 @@ class Log(Base):
 
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime)
-    type = Column(String)
-    source = Column(String)
-    target = Column(String)
+    type = Column(String(20))
+    source = Column(String(15))
+    target = Column(String(15))
     text = Column(Text)
 
     def __init__(self, type, source, target, text):
