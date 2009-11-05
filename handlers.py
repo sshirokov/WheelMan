@@ -14,10 +14,16 @@ def echo_verbose(meta, message):
 
 def dance(meta):
     return ("Just for you, %s" % nm_to_n(meta.event.source()),
-            "|_^_^_|",
-            "/_^_^_/",
-            "\\_^_^_\\",
-            "^_^_v")
+            "(^'-')^",
+            "(^'-')>",
+            "(>'-')>",
+            "<('-'^)",
+            "^('-'^)",
+            "(^'-')^",
+            "(^'-')>",
+            "(>'-')>",
+            "<('-'^)",
+            "^('-'^)")
 
 def first_post(meta):
     from wheelman.core.db import Session
